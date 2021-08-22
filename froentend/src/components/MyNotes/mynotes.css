@@ -1,0 +1,13 @@
+.arc_head_main{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1;
+}
+.arc_action_btn>Button{
+    margin-left: 2em;
+}
+.edit_btn{
+    color: #ffffff !important;
+    background: rgb(38, 170, 38) !important;
+}

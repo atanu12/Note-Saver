@@ -1,0 +1,26 @@
+.main_screen_wrapper{
+    margin: 2em 5em;
+}
+.main_screen{
+    width: 100%;
+}
+.head_title{
+    font-size: 3rem;
+    font-weight: 300;
+    margin: 0;
+}
+hr{
+    width: 70vw;
+    border: 1px solid #607d8b;
+    opacity: 0.3;
+}
+@media (max-width: 911px) {
+    .head_title{
+        font-size: 2rem;;
+    }
+}
+@media (max-width: 636px) {
+    .head_title{
+        font-size: 1.5rem;;
+    }
+}
