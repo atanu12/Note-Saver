@@ -4,13 +4,17 @@
   "description": "Creating backend Server for notes app",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon backend/server.js"
+    "start": "nodemon backend/server.js",
+    "client": "npm start --prefix froentend",
+    "dev": "concurrently \"npm start\" \"npm run client\"  "
   },
   "author": "Atanu Mondal",
   "license": "ISC",
   "dependencies": {
+    "concurrently": "^6.2.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "mongoose": "^5.13.7",
     "nodemon": "^2.0.12"
   }
 }
