@@ -1,7 +1,8 @@
 const express = require("express");
 const notes = require('./data/notes')
 const dotenv =require("dotenv");
-const dbConnect = require("./config/db")
+const dbConnect = require("./config/db");
+const userRoute = require('./routes/userRoute')
 
 dotenv.config()
 dbConnect()
@@ -16,6 +17,7 @@ app.get('/api/notes',(req, res)=>{
     res.json(notes)
 })
 
+app.use('/api/users', userRoute)
 app.get('/api/notes/:id', (req, res)=>{
     const note = notes.find((n)=> n._id === req.params.id)
     res.send(note)
