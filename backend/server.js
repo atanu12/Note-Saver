@@ -2,27 +2,25 @@ const express = require("express");
 const notes = require('./data/notes')
 const dotenv =require("dotenv");
 const dbConnect = require("./config/db");
-const userRoute = require('./routes/userRoute')
+const userRoute = require('./routes/userRoute');
+const { notFound, errorHandler } = require("./middlewares/errormiddleware");
+
 
 dotenv.config()
-dbConnect()
-
 const app = express();
+dbConnect()
+app.use(express.json())
 
-app.get('/', (req,res)=>{
-    res.send("Api is running")
-})
+// app.get('/api/notes',(req, res)=>{
+//     res.json(notes)
+// })
 
-app.get('/api/notes',(req, res)=>{
-    res.json(notes)
-})
-
+// import userRoutes from the router
 app.use('/api/users', userRoute)
-app.get('/api/notes/:id', (req, res)=>{
-    const note = notes.find((n)=> n._id === req.params.id)
-    res.send(note)
-})
-
+app.use(notFound)
+app.use(errorHandler)
+    
 const PORT = process.env.PORT || 5000
 
 app.listen(PORT, console.log(`Running on the ${PORT}`));
+
