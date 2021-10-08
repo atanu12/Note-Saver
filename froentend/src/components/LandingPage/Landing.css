@@ -21,7 +21,7 @@
 .main_button{
     margin: 5em 0em;
 }
-.main_button>button{
+.main_button >a>button{
     width: 10%;
     height: 40px;
     margin: 0 2em;
@@ -29,7 +29,7 @@
     background: #1565c0;
     color: #ffffff;
 }
-.main_button>button:last-child{
+.main_button >a>button:last-child{
     background: transparent !important;
     color: black;
     border: 2px solid #1565c0;
