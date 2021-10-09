@@ -11,9 +11,9 @@ const app = express();
 dbConnect()
 app.use(express.json())
 
-// app.get('/api/notes',(req, res)=>{
-//     res.json(notes)
-// })
+app.get('/api/notes',(req, res)=>{
+    res.json(notes)
+})
 
 // import userRoutes from the router
 app.use('/api/users', userRoute)
