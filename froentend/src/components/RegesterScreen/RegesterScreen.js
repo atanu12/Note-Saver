@@ -1,6 +1,9 @@
 import { Box, Button, makeStyles, TextField } from "@material-ui/core";
+import axios from "axios";
 import React, { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 import MainScreen from "../MainScreen/MainScreen";
+import Loding from "../Shared/Loding";
 
 // custom Style
 const useStyles = makeStyles((theme) => ({
@@ -29,20 +32,88 @@ const RegesterScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmpassword, setConfirmpassword] = useState("");
-  const [pic, setPic] = useState("");
+  const [pic, setPic] = useState( "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg");
+  const [picmsg, setPicmsg] = useState("");
   const [matchpass, setMatchpass] = useState("")
   const [error, setError] = useState("");
   const [loding, setLoding] = useState("");
 
-  // formdata submit
-  const handelSubmit =(e)=>{
+  // formdata submit and api call
+  const handelSubmit = async (e)=>{
+
+    
     e.preventDefault();
-    console.log(name, email, pic,password,confirmpassword);
+    // console.log(name, email, pic,password,confirmpassword);
+  // check password
+    setLoding(true)
+    if( password !== confirmpassword){
+      setMatchpass('Password Do Not Match')
+      toast.error('Password Do Not Match')
+      setLoding(false)
+    }else{
+      // cll api
+      setMatchpass(null)
+    try {
+      const config ={
+        headers:{
+            "Content-type":"application/json"
+        }
+    }
+    setLoding(true)
+    const { data } = await axios.post("/api/users",{
+      name, email,password,pic
+    },config);
+    console.log(data);
+    localStorage.setItem("userDetails", JSON.stringify(data));
+    setLoding(false)
+      
+    } catch (error) {
+      setError(error.response.data.message);
+      setLoding(false);
+      toast.error(error.response.data.message,{
+        position: "top-center",
+        theme: "colored",
+       })
+      
+    }
+    }
+
+    
+    
+  }
+  // save the upload pics
+  const uploadPic = (pics) => {
+    if(!pics){
+      return setPicmsg('Please Select an Image')
+      toast.error('Please Select an Image')
+    }
+    setPicmsg(null);
+    if(pics.type === 'image/jpeg' || pics.type === 'image/png'){
+      const data = new FormData();
+      data.append('file', pics);
+      data.append('upload_preset',"note-saver")
+      data.append('cloud_name',"social-app-atanu")
+      fetch(' https://api.cloudinary.com/v1_1/social-app-atanu/image/upload',{
+        method:'post',
+        body:data,
+      }).then((rest)=> rest.json()).then((data)=>{
+        setPic(data.url.toString())
+      }).catch((err)=>{
+        console.log(err);
+      })
+    }else{
+      return setPicmsg('Please Select an Image')
+      toast.error('Please Select an Image')
+    }
   }
 
   return (
     <MainScreen title="REGISTER">
       <div className="regester_main">
+        { matchpass && <ToastContainer/>  }
+        { error && <ToastContainer/>  }
+        { picmsg && <ToastContainer/>  }
+        { loding && <Loding/> }
         <Box
           component="form"
           sx={{
@@ -109,8 +180,8 @@ const RegesterScreen = () => {
               className={classes.textField}
               variant="outlined"
               accept="image/*"
-              value={pic}
-              onChange={(e)=>setPic(e.target.value)}
+              onChange={(e)=> uploadPic(e.target.files[0])}
+              
             />
           </div>
 

@@ -7,7 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import { Link } from 'react-router-dom';
+import { Link,useHistory } from 'react-router-dom';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -62,6 +62,7 @@ const useStyles = makeStyles((theme) => ({
   }));
 
 const Header = () => {
+    const history = useHistory()
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -98,7 +99,7 @@ const Header = () => {
         onClose={handleMenuClose}
       >
         <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-        <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+        <MenuItem onClick={handleMenuClose, ()=>{localStorage.removeItem('userInfo'); history.push('/')} }>Logout</MenuItem>
       </Menu>
     );
   
