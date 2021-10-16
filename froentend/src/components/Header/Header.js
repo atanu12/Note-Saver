@@ -8,6 +8,8 @@ import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import { Link,useHistory } from 'react-router-dom';
+import { useDispatch,useSelector } from 'react-redux';
+import { logout } from '../Shared/actions/userAction';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -63,6 +65,17 @@ const useStyles = makeStyles((theme) => ({
 
 const Header = () => {
     const history = useHistory()
+
+    // Logout handler
+    const dispatch = useDispatch()
+    const userLogin = useSelector(state => state.userLogin)
+    const {userInfo} = userLogin
+
+    const logoutHandler = () =>{
+      dispatch(logout())
+      history.push('/')
+    }
+
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -99,7 +112,7 @@ const Header = () => {
         onClose={handleMenuClose}
       >
         <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-        <MenuItem onClick={handleMenuClose, ()=>{localStorage.removeItem('userInfo'); history.push('/')} }>Logout</MenuItem>
+        <MenuItem onClick={handleMenuClose, logoutHandler}>Logout</MenuItem>
       </Menu>
     );
   

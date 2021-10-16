@@ -1,8 +1,10 @@
 import { Box, Button, makeStyles, TextField } from "@material-ui/core";
-import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router";
 import { toast, ToastContainer } from "react-toastify";
 import MainScreen from "../MainScreen/MainScreen";
+import { regester } from "../Shared/actions/userAction";
 import Loding from "../Shared/Loding";
 
 // custom Style
@@ -26,60 +28,38 @@ const useStyles = makeStyles((theme) => ({
 }));
 const RegesterScreen = () => {
   const classes = useStyles();
+  const history = useHistory()
 
   // create useState for all the fields
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmpassword, setConfirmpassword] = useState("");
+  const [matchpass, setMatchpass] = useState("");
   const [pic, setPic] = useState( "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg");
   const [picmsg, setPicmsg] = useState("");
-  const [matchpass, setMatchpass] = useState("")
-  const [error, setError] = useState("");
-  const [loding, setLoding] = useState("");
+
+  // calling the reducer
+
+  const dispatch = useDispatch();
+  const userRegester = useSelector(state => state.userRegester)
+  const {loading, error, userInfo} = userRegester;
+
+  // redrite to login scren
+  useEffect(()=>{
+    if(userInfo){
+      history.push('/')
+    }
+  },[history, userInfo])
 
   // formdata submit and api call
-  const handelSubmit = async (e)=>{
-
-    
+  const handelSubmit = async (e) =>{
     e.preventDefault();
-    // console.log(name, email, pic,password,confirmpassword);
-  // check password
-    setLoding(true)
-    if( password !== confirmpassword){
-      setMatchpass('Password Do Not Match')
-      toast.error('Password Do Not Match')
-      setLoding(false)
+    if(password !== confirmpassword){
+      setMatchpass('Password do not Match')
     }else{
-      // cll api
-      setMatchpass(null)
-    try {
-      const config ={
-        headers:{
-            "Content-type":"application/json"
-        }
+      dispatch(regester(name, email, password, pic))
     }
-    setLoding(true)
-    const { data } = await axios.post("/api/users",{
-      name, email,password,pic
-    },config);
-    console.log(data);
-    localStorage.setItem("userDetails", JSON.stringify(data));
-    setLoding(false)
-      
-    } catch (error) {
-      setError(error.response.data.message);
-      setLoding(false);
-      toast.error(error.response.data.message,{
-        position: "top-center",
-        theme: "colored",
-       })
-      
-    }
-    }
-
-    
-    
   }
   // save the upload pics
   const uploadPic = (pics) => {
@@ -113,7 +93,7 @@ const RegesterScreen = () => {
         { matchpass && <ToastContainer/>  }
         { error && <ToastContainer/>  }
         { picmsg && <ToastContainer/>  }
-        { loding && <Loding/> }
+        { loading && <Loding/> }
         <Box
           component="form"
           sx={{

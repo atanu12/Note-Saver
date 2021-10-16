@@ -3,14 +3,14 @@ import {
   makeStyles,
   TextField,
 } from "@material-ui/core";
-import axios from "axios";
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { NavLink, useHistory } from "react-router-dom";
 import MainScreen from "../MainScreen/MainScreen";
-import ErrorHandler from "../Shared/ErrorHandler";
 import Loding from "../Shared/Loding";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useDispatch, useSelector } from 'react-redux'
+import { login } from "../Shared/actions/userAction";
 
 // custom Style
 const useStyles = makeStyles((theme) => ({
@@ -37,41 +37,29 @@ const useStyles = makeStyles((theme) => ({
 
 export const LoginScreen = () => {
   const classes = useStyles();
+  const history = useHistory()
 
   // create useState for all the fields
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errormsg, setErrormsg] = useState("");
-  const [loding, setLoding] = useState("");
+  
+  // using Redux
+  const dispatch = useDispatch()
+
+  const userLogin = useSelector((state )=> state.userLogin)
+  const { loading, error, userInfo} = userLogin
+
+  // rediicet to login page using hooks
+  useEffect(() => {
+    if(userInfo){
+      history.push('/mynotes')
+    }
+  }, [history, userInfo])
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    
-    try {
-        const config ={
-            headers:{
-                "Content-type":"application/json"
-            }
-        }
-        setLoding(true);
-
-        // calling the api
-        const { data } = await axios.post("/api/users/login",{
-            email, password
-        },config);
-
-        // if the pocess is conpleted store the value in local storage
-        console.log(data);
-        localStorage.setItem("userInfo",JSON.stringify(data))
-        setLoding(false)
-    } catch (error) {
-       setErrormsg(error.response.data.message)
-       setLoding(false)
-       toast.error(error.response.data.message,{
-        position: "top-center",
-        theme: "colored",
-       })
-    }
+    dispatch(login(email, password));
+    toast.error(error)
   };
 
   
@@ -80,7 +68,7 @@ export const LoginScreen = () => {
   return (
     <MainScreen title="LOGIN">
        
-        {loding && <Loding/> }
+        {loading && <Loding/> }
       <form onSubmit={submitHandler}>
         <div>
           <div><label className={classes.label}>Email</label></div>
@@ -110,7 +98,7 @@ export const LoginScreen = () => {
       <div>
           <h4 className={classes.normal} >New User ? <NavLink to="/regester">Register Here</NavLink></h4>
       </div>
-      {errormsg && <ToastContainer/> }
+      {error && <ToastContainer/> }
     </MainScreen>
   );
 };
